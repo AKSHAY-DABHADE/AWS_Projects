@@ -1,0 +1,145 @@
+Project Document: Automating Infrastructure Deployment with AWS CloudFormation
+
+Overview and Objectives
+Deploying infrastructure in a consistent, reliable manner is challenging, requiring adherence to documented procedures and availability of staff during off-hours. AWS CloudFormation facilitates this by allowing the definition of infrastructure in a template that can be automatically deployed. This project involves deploying multiple infrastructure layers with AWS CloudFormation, updating CloudFormation stacks, and managing resource deletion.
+
+Objectives:
+1. Deploy a VPC networking layer using AWS CloudFormation.
+2. Deploy an application layer referencing the networking layer.
+3. Explore AWS CloudFormation templates using CloudFormation Designer.
+4. Update an existing CloudFormation stack.
+5. Delete a CloudFormation stack while retaining certain resources.
+
+## Accessing the AWS Management Console
+1. At the top of these instructions, choose **Start Lab** to launch your lab.
+2. Wait for the Start Lab panel to display **Lab status: ready**, then close the panel by choosing the **X**.
+3. Choose **AWS** at the top of these instructions to open the AWS Management Console in a new browser tab.
+4. Arrange the AWS Management Console tab alongside these instructions.
+
+Do not change the Region unless specifically instructed to do so.
+
+Task 1: Deploying a Networking Layer
+
+Steps to Deploy the Networking Layer:
+1. Download the template:
+   - Right-click [this link](#) and download the `lab-network.yaml` template to your computer.
+   - Optionally, open the template in a text editor to review how AWS resources are defined.
+
+2. In the AWS Management Console:
+   - Go to **Services** and choose **CloudFormation**.
+   - Click **Create stack** and configure the following settings:
+
+3. **Step 1: Specify template**
+   - Template source: **Upload a template file**
+   - Upload the `lab-network.yaml` file.
+   - Choose **Next**.
+
+4. **Step 2: Create Stack**
+   - Stack name: `lab-network`
+   - Choose **Next**.
+
+5. **Step 3: Configure stack options**
+   - In the Tags section, enter:
+     - Key: `application`
+     - Value: `inventory`
+   - Choose **Next**.
+
+6. **Step 4: Review lab-network**
+   - Choose **Create stack**.
+
+7. Monitor stack creation:
+   - Go to the **Stack info** tab and wait for the Status to change to **CREATE_COMPLETE**. Refresh every 15 seconds if necessary.
+   - Examine created resources under the **Resources** tab. Refresh if the list is empty.
+   - View the events log in the **Events** tab to see the creation activities.
+   - Check outputs in the **Outputs** tab for resource IDs.
+
+8. Review the template used under the **Template** tab.
+
+## Task 2: Deploying an Application Layer
+
+### Steps to Deploy the Application Layer:
+1. Download the template:
+   - Right-click [this link](#) and download the `lab-application.yaml` template.
+
+2. In the AWS Management Console:
+   - In the left navigation pane, choose **Stacks**.
+   - Select **Create stack > With new resources (standard)** and configure the following settings:
+
+3. **Step 1: Specify template**
+   - Template source: **Upload a template file**
+   - Upload the `lab-application.yaml` file.
+   - Choose **Next**.
+
+4. **Step 2: Create Stack**
+   - Stack name: `lab-application`
+   - NetworkStackName: `lab-network`
+   - Choose **Next**.
+
+5. **Step 3: Configure stack options**
+   - In the Tags section, enter:
+     - Key: `application`
+     - Value: `inventory`
+   - Choose **Next**.
+
+6. **Step 4: Review lab-application**
+   - Choose **Create stack**.
+
+7. Monitor stack creation:
+   - Examine details in the **Events** and **Resources** tabs.
+   - Wait for the Status to change to **CREATE_COMPLETE** in the **Stack info** tab.
+   - In the **Outputs** tab, copy the displayed URL and open it in a new browser tab to view the application.
+
+## Task 3: Updating a Stack
+
+### Steps to Update the Stack:
+1. Examine current security group settings:
+   - In the AWS Management Console, go to **Services > EC2**.
+   - In the left navigation pane, choose **Security Groups**.
+   - Select the `lab-application-WebServerSecurityGroup` and check the **Inbound rules** tab for current rules.
+
+2. Update the stack:
+   - Download the updated template: right-click [this link](#) and download the `lab-application2.yaml` template.
+   - In the AWS Management Console, go to **CloudFormation**.
+   - In the Stacks list, select `lab-application`.
+   - Choose **Update** and configure the following settings:
+
+3. **Replace current template**
+   - Template source: **Upload a template file**
+   - Upload the `lab-application2.yaml` file.
+   - Choose **Next** on each screen to advance to the **Review lab-application** page.
+
+4. **Change set preview**
+   - Verify the changes in the Change set preview section.
+   - Choose **Update stack**.
+
+5. Monitor stack update:
+   - Wait for the Status to change to **UPDATE_COMPLETE** in the **Stack info** tab.
+   - Verify the change in the EC2 console under **Security Groups** by checking the **Inbound rules** tab for the new SSH rule.
+
+## Task 4: Exploring Templates with AWS CloudFormation Designer
+### Steps to Explore Templates:
+1. In the AWS Management Console, go to **Services > CloudFormation**.
+2. In the left navigation pane, choose **Designer**.
+3. Choose the **File** menu, select **Open > Local file**, and open the `lab-application2.yaml` template.
+4. Experiment with Designer features:
+   - Click resources to display their definitions in the lower pane.
+   - Drag new resources from the **Resource types** pane into the design area.
+   - Create relationships between resources using resource connector circles.
+5. Open the `lab-network.yaml` template and explore its resources in Designer.
+
+## Task 5: Deleting the Stack
+### Steps to Delete the Stack:
+1. Delete the application stack:
+   - Return to the main CloudFormation console.
+   - Choose the `lab-application` stack.
+   - Choose **Delete** and then **Delete stack**.
+   - Monitor the deletion process in the **Events** tab, updating the screen as needed.
+   - Wait for the stack to disappear from the stacks list.
+
+2. Verify snapshot creation:
+   - In the AWS Management Console, go to **Services > EC2**.
+   - In the left navigation pane, choose **Snapshots**.
+   - Confirm that a snapshot was created with a start time in the last few minutes.
+
+## Conclusion
+This project provided practical experience with AWS CloudFormation, covering the deployment of multiple infrastructure layers, stack updates, and resource management. Participants learned how to create, update, and delete CloudFormation stacks, ensuring a consistent and reliable infrastructure deployment process.
